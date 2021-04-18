@@ -21,11 +21,31 @@ fn fetch_busy_value_from_remote(url: &str) -> Result<usize, Box<dyn std::error::
     Ok(busy_value)
 }
 
+fn ensure_schema(db: &rusqlite::Connection) {
+    db.execute(
+        "CREATE TABLE if not exists bergwelt (
+                  id              INTEGER PRIMARY KEY,
+                  datetime        TEXT NOT NULL,
+                  present         INTEGER
+                  )",
+        [],
+    )
+    .unwrap();
+}
+
 fn main() {
+    let db = rusqlite::Connection::open("dav-busylog.sqlite").unwrap();
+    ensure_schema(&db);
+
     loop {
         match fetch_busy_value_from_remote(URL) {
             Ok(value) => {
-                println!("Current: {:#?}", value)
+                println!("Current: {:#?}", value);
+                db.execute(
+                    "insert into bergwelt (datetime, present) values (?1, ?2)",
+                    rusqlite::params![chrono::Utc::now().naive_local(), value],
+                )
+                .unwrap();
             }
             Err(error) => {
                 println!("Failed: {}", error)
