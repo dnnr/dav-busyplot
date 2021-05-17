@@ -22,4 +22,4 @@ docker run --rm -ti -u "$UID" \
     -v "$(dirname "$dbfile")":/db:ro \
     --workdir /src \
     "$(docker build -q .)" \
-    python3 dav-busyplot.py "/db/$(basename "$dbfile")" /output/dav-busyplot.html
+    python3 dav-busyplot.py --filename=index.html "/db/$(basename "$dbfile")" /output

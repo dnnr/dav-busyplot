@@ -3,7 +3,9 @@
 import argparse
 import bokeh as bk
 import bokeh.plotting as bkp
+import os
 import pandas as pd
+import shutil
 import sqlite3
 import sys
 from datetime import datetime, timedelta
@@ -154,8 +156,19 @@ def make_figure_weekly_heatmap(df):
 def run(args):
     argparser = argparse.ArgumentParser()
     argparser.add_argument('db', type=str)
-    argparser.add_argument('outfile', type=str)
+    argparser.add_argument('outdir', type=str)
+    argparser.add_argument('--filename', default='dav-busyplot.html', type=str)
+    argparser.add_argument('--use-cdn', action='store_true')
     args = argparser.parse_args(args)
+
+    if not args.use_cdn:
+        # Set rootdir so that bokeh.min.js is loaded from the same directory as the
+        # HTML file:
+        bk.settings.settings.rootdir = os.path.join(bk.util.paths.ROOT_DIR, 'server/static/js')
+        bk.settings.settings.resources = 'relative'
+
+        shutil.copyfile(os.path.join(bk.settings.settings.rootdir(), 'bokeh.min.js'),
+                        os.path.join(args.outdir, 'bokeh.min.js'))
 
     df = load_data(args.db)
 
@@ -171,7 +184,8 @@ def run(args):
     #  plot = bk.layouts.gridplot([[figure_all_time], [figure_all_time2]], sizing_mode='stretch_both')
     plot = bk.layouts.column([figure_all_time, figure_weekly_heatmap], sizing_mode='stretch_both')
 
-    bkp.output_file(args.outfile, title='DAV busy plot')
+    bkp.output_file(os.path.join(args.outdir, args.filename),
+                    title='DAV busy plot')
     bkp.save(plot)
 
 
