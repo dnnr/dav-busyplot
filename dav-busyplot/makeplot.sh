@@ -16,7 +16,7 @@ cd "$(dirname "$0")"
 docker build .
 
 mkdir -p output
-docker run --rm -ti -u "$UID" \
+docker run --rm -i -u "$UID" \
     -v "$PWD:/src:ro" \
     -v "$PWD/output:/output" \
     -v "$(dirname "$dbfile")":/db:ro \
