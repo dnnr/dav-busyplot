@@ -145,7 +145,13 @@ def make_figure_weekly_heatmap(df):
         y_range=bk.models.FactorRange(factors=list(reversed(OrderedDict.fromkeys(df['weeknum'])))),
     )
 
-    figure.xaxis.major_label_orientation = 1
+    # We do not want to have major tick labels (the most precise ones with the
+    # %H:%M format are called major in bokeh, unintuitively) because they just
+    # clutter things up. Turns out this is not an easy feat, but we can use
+    # this FuncTickFormatter trick to simply replace all these labels with
+    # empty strings. Luckily, it does not affect the other labels (for the
+    # hours and weekdays).
+    figure.axis.formatter = bk.models.FuncTickFormatter(code='return "";')
 
     color_mapper = bk.models.LinearColorMapper(palette=list(reversed(bk.palettes.Plasma[11])), low=0, high=65)
 
