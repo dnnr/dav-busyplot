@@ -149,6 +149,10 @@ def make_figure_weekly_heatmap(df):
                 color={'field': 'present', 'transform': color_mapper},
                 )
 
+    # Hide all grid lines:
+    figure.xgrid.grid_line_color = None
+    figure.ygrid.grid_line_color = None
+
     return figure
 
 
