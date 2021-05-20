@@ -45,7 +45,7 @@ def make_figure_all_time(df):
         days=['%Y-%m-%d, %a'],
     )
 
-    color_mapper = bk.models.LinearColorMapper(palette=list(reversed(bk.palettes.Plasma[11])), low=0, high=30)
+    color_mapper = bk.models.LinearColorMapper(palette=list(reversed(bk.palettes.Plasma[11])), low=0, high=65)
 
     span = 30
     span_str = f'{span}min'
@@ -59,6 +59,12 @@ def make_figure_all_time(df):
     # TODO: Make zero-values during opening hours more visible, somehow
 
     figure.vbar(x='datetime', top='present', source=span_max, width=vbar_width_factor * span * 60 * 1000, alpha=1, color={'field': 'present', 'transform': color_mapper})
+
+    # Add color bar legend:
+    color_bar = bk.models.ColorBar(color_mapper=color_mapper,
+                         ticker=bk.models.BasicTicker(desired_num_ticks=len(color_mapper.palette)),
+                         formatter=bk.models.PrintfTickFormatter(format="%d"))
+    figure.add_layout(color_bar, "right")
 
     return figure
 
@@ -141,13 +147,21 @@ def make_figure_weekly_heatmap(df):
 
     figure.xaxis.major_label_orientation = 1
 
-    color_mapper = bk.models.LinearColorMapper(palette=list(reversed(bk.palettes.Plasma[11])), low=0, high=30)
+    color_mapper = bk.models.LinearColorMapper(palette=list(reversed(bk.palettes.Plasma[11])), low=0, high=65)
+
+    # Draw each time slice as a rectangle
     figure.rect(x='weektime', y='weeknum', source=df,
                 width=1,
                 height=vbar_height,
                 alpha=1,
                 color={'field': 'present', 'transform': color_mapper},
                 )
+
+    # Add color bar legend:
+    color_bar = bk.models.ColorBar(color_mapper=color_mapper,
+                         ticker=bk.models.BasicTicker(desired_num_ticks=len(color_mapper.palette)),
+                         formatter=bk.models.PrintfTickFormatter(format="%d"))
+    figure.add_layout(color_bar, "right")
 
     # Hide all grid lines:
     figure.xgrid.grid_line_color = None
