@@ -102,16 +102,15 @@ def make_figure_weekly_heatmap(df):
     # to plot it as category, not integer)
     df['weeknum'] = df.index.isocalendar().week.apply(str)
 
-    # Compute column that holds the time relative to the beginning of the week (as a tuple):
-    df['weektime'] = df.index.time
-    for index in df.index:
-        # Values are strings so that we can plot them as categorical data (not
-        # numerical), because we don't want a linear x-axis including all the
-        # night hours as well.
-        df['weektime'][index] = (datetime.strftime(index, '%A'),
-                                 str(index.time().strftime('%H')),
-                                 str(index.time().strftime('%H:%M')),
-                                 )
+    # Compute weektime column that holds as tuple representing the time
+    # relative to the beginning of the week. Using strftime ensures that values
+    # are strings, which is what we need to plot the x-axis as categorical
+    # data, instead of an actual timeline with night hours and all.
+    df['weektime'] = [(datetime.strftime(index, '%A'),
+                       index.time().strftime('%H'),
+                       index.time().strftime('%H:%M'),
+                       )
+                      for index in df.index]
 
     # Explicitly define all values for the x-axis in order. Otherwise, the axis
     # would start where the input data starts, which is not necessarily Monday
