@@ -198,10 +198,9 @@ def run(args):
     figure_all_time = make_figure_all_time(df.copy())
     figure_weekly_heatmap = make_figure_weekly_heatmap(df)
 
-    # Set a dummy height value for each figure (without it, the auto-sizing in layouts doesn't work)
-    figure_all_time.height = 42
-    figure_weekly_heatmap.height = 42
-    figure_all_time.sizing_mode = 'stretch_both'
+    # Use a fixed height for the all time figure and use the remaining vertical
+    # space for the heatmap:
+    figure_all_time.height = 300
     figure_weekly_heatmap.sizing_mode = 'stretch_both'
 
     #  plot = bk.layouts.gridplot([[figure_all_time], [figure_all_time2]], sizing_mode='stretch_both')
