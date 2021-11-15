@@ -11,7 +11,7 @@ import sys
 from datetime import datetime, timedelta
 from collections import OrderedDict
 
-OPENING_HOURS = ('10:30', '21:00')
+OPENING_HOURS = ('9:0', '23:00')
 
 
 def load_data(db_path):
@@ -123,7 +123,7 @@ def make_figure_weekly_heatmap(df):
     # morning.
     x_range = []
     for weekday in ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"):
-        opening_times = pd.date_range(start='10:45', end='21:00', freq='30min')
+        opening_times = pd.date_range(start='9:15', end='23:00', freq='30min')
         for time in opening_times:
             hour_string = time.strftime('%H')
             time_string = time.strftime('%H:%M')
